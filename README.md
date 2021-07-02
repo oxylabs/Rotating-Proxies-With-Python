@@ -8,12 +8,6 @@
 - [Rotating Multiple Proxies](#rotating-multiple-proxies)
 - [Retrying With Next Proxy](#retrying-with-next-proxy)
 
-Whenever a webpage is requested using a browser or code, the request reaches the web server, and the web server returns a response.
-
-In this case, the web server knows everything about the client. The most important information here is the IP address. This may not be desired for several reasons. For example, one such case is privacy concerns. Another use case is web scraping at scale - if a server receives a lot of requests from the same IP, the web server can throttle or slow down the speed of returning the response. The web server can also completely ban that IP address, either temporarily or permanently.
-
-The solution to this problem is using a lot of proxies. With multiple proxies, a rotation of the servers can be put in place. That means that effectively every request will be reaching the web server from a different IP. This article covers this specific scenario. We will build a web scraper from the ground up and move on to create a solution that implements rotation of proxies using Python.
-
 ## Finding Current IP Address
 
 Before we explore various ways to rotate proxies with Python, we need to standardize the code used to get the current IP address. 
