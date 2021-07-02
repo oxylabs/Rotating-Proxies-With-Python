@@ -3,34 +3,16 @@
 
 ## Table of Contents
 
-- [What Is a Proxy?](#what-is-a-proxy)
 - [Finding Current IP Address](#finding-current-ip-address)
 - [Using Single Proxy](#using-single-proxy)
 - [Rotating Multiple Proxies](#rotating-multiple-proxies)
 - [Retrying With Next Proxy](#retrying-with-next-proxy)
 
-## What Is a Proxy?
-
 Whenever a webpage is requested using a browser or code, the request reaches the web server, and the web server returns a response.
-
-![Direct Request without Proxy](images/Direct_Request.png)
 
 In this case, the web server knows everything about the client. The most important information here is the IP address. This may not be desired for several reasons. For example, one such case is privacy concerns. Another use case is web scraping at scale - if a server receives a lot of requests from the same IP, the web server can throttle or slow down the speed of returning the response. The web server can also completely ban that IP address, either temporarily or permanently.
 
-The solution to this problem is using a proxy.
-
-The proxy server works as a middle-man. The client sends the requests to the proxy server, and the proxy server sends the requests to the target web server. The response is returned in the same manner.
-
-![Direct Request without Proxy](images/Request_Via_Proxy.png)
-
-This approach still does not solve the problem completely.  If a single proxy server is used, eventually, that IP address will be blacklisted.
-
-The solution to this problem is using a lot of proxies. With multiple proxies, a rotation of the servers can be put in place. That means that effectively every request will be reaching the web server from a different IP.
-
-
-![Direct Request without Proxy](images/Multiple_Proxy_Servers.png)
-
-This article covers this specific scenario. We will build a web scraper from the ground up and move on to create a solution that implements rotation of proxies using Python.
+The solution to this problem is using a lot of proxies. With multiple proxies, a rotation of the servers can be put in place. That means that effectively every request will be reaching the web server from a different IP. This article covers this specific scenario. We will build a web scraper from the ground up and move on to create a solution that implements rotation of proxies using Python.
 
 ## Finding Current IP Address
 
@@ -67,8 +49,6 @@ Take a note of this proxy. This is the real proxy address. We will modify this c
 Let's start with a single proxy.
 
 ## Using Single Proxy 
-
-Free proxies can be found by doing a simple internet search. There are many websites that will list a lot of proxies, along with the port number. Usually, a user name and password are not required for these proxies.
 
 **Important Note**: Free proxies are usually slower and unreliable. It is highly recommended to use reliable proxies. 
 
@@ -141,17 +121,6 @@ In this example, we will be working with a file downloaded from one of the free 
 ```
 
 To get a rotating IP proxy using this file, first, we need to write a function that can return one proxy at a time. This is a crucial step to implement proxy rotation. It can be achieved by using a generator function. These functions use the `yield` keyword instead of the usual `return` keyword and they keep track of the last value returned. This means that in the next call, a different value can be returned.
-
-Even though the file that we have is a text file, we can use the `csv` module. Here is a code snippet that returns the same value every time the function is executed:
-
-```python
-# This is NOT what we want
-def get_next_proxy(filename):
-    with open(filename) as f:
-        reader = csv.reader(f)
-        for row in reader:
-            return row[0] # Returning first column of the row
-```
 
 This function will return the first row every time it is called. If the return statement is replaced with a yield statement, it will process one row every time it is executed.
 
