@@ -17,7 +17,7 @@ A very useful site for this kind of testing is [httpbin.org](http://httpbin.org/
 This article uses the Requests module. If you do not have it installed, install it from a terminal by running the following command:
 
 ```sh
-$pip install requets
+$pip install requests
 ```
 
 If you get permission errors, either use a virtual environment or add `--user` switch the pip command.
