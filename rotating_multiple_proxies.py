@@ -10,7 +10,7 @@ with open(CSV_FILENAME) as open_file:
     reader = csv.reader(open_file)
     for csv_row in reader:
         scheme_proxy_map = {
-            "https": csv_row[0],
+            'https': csv_row[0],
         }
 
         try:
