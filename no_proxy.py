@@ -1,4 +1,4 @@
 import requests
 
-response = requests.get('http://httpbin.org/ip')
-print(response.json())
+response = requests.get('https://ip.oxylabs.io/ip')
+print(response.text)

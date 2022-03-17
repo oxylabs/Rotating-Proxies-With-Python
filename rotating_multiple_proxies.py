@@ -1,4 +1,5 @@
 import csv
+
 import requests
 from requests.exceptions import ProxyError, ReadTimeout, ConnectTimeout
 
@@ -9,12 +10,16 @@ with open(CSV_FILENAME) as open_file:
     reader = csv.reader(open_file)
     for csv_row in reader:
         scheme_proxy_map = {
-            'http': csv_row[0],
+            'https': csv_row[0],
         }
 
         try:
-            response = requests.get('http://httpbin.org/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
+            response = requests.get(
+                'https://ip.oxylabs.io/ip',
+                proxies=scheme_proxy_map,
+                timeout=TIMEOUT_IN_SECONDS,
+            )
         except (ProxyError, ReadTimeout, ConnectTimeout) as error:
             pass
         else:
-            print(response.json())
+            print(response.text)

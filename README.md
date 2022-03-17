@@ -34,7 +34,7 @@ Alternatively, you can install the dependencies from the included [requirements.
 $ pip install -r requirements.txt
 ```
 
-Congratulations, you have successfully installed the `request` module. Now, it's time to find out your current ip address!
+Congratulations, you have successfully installed the `request` module. Now, it's time to find out your current Ip address!
 
 ## Finding Your Current IP Address
 
@@ -43,8 +43,8 @@ Create a file with the `.py` extension with the following contents (or just copy
 ```python
 import requests
 
-response = requests.get('http://httpbin.org/ip')
-print(response.json())
+response = requests.get('https://ip.oxylabs.io/ip')
+print(response.text)
 ```
 
 Now, run it from a terminal
@@ -52,7 +52,7 @@ Now, run it from a terminal
 ```bash
 $ python no_proxy.py
 
-{'origin': '128.90.50.100'}
+128.90.50.100
 ```
 The output of this script will show your current IP address, which uniquely identifies you on the network. Instead of exposing it directly when requesting pages, we will use a proxy server.
 
@@ -66,8 +66,8 @@ Your first step is to [find a free proxy server](https://www.google.com/search?q
 
 To use a proxy, you will need its:
 * scheme (e.g. `http`)
-* ip (e.g. `194.163.131.117`)
-* port (e.g. `8080`)
+* ip (e.g. `2.56.215.247`)
+* port (e.g. `3128`)
 * username and password that is used to connect to the proxy (optional)
 
 Once you have it, you need to set it up in the following format
@@ -77,15 +77,15 @@ SCHEME://USERNAME:PASSWORD@YOUR_PROXY_IP:YOUR_PROXY_PORT
 
 Here are a few examples of the proxy formats you may encounter:
 ```text
-http://194.163.131.117:8080
-https://194.163.131.117:8091
-https://my-user:aegi1Ohz@194.163.131.117:8044
+http://2.56.215.247:3128
+https://2.56.215.247:8091
+https://my-user:aegi1Ohz@2.56.215.247:8044
 ```
 
 Once you have the proxy information, assign it to a constant.
 
 ```python
-PROXY = 'http://194.163.131.117:8080'
+PROXY = 'http://2.56.215.247:3128'
 ```
 
 Next, define a timeout in seconds as it is always a good idea to avoid waiting indefinitely for the response that may never be returned (due to network issues, server issues or the problems with the proxy server)
@@ -95,10 +95,10 @@ TIMEOUT_IN_SECONDS = 10
 
 The requests module [needs to know](https://docs.python-requests.org/en/master/user/advanced/#proxies) when to actually use the proxy.
 For that, consider the website you are attempting to access. Does it use http or https?
-Since we're trying to access **http**://httpbin.org/ip, we can define this configuration as follows
+Since we're trying to access **https**://ip.oxylabs.io/ip, we can define this configuration as follows
 ```python
 scheme_proxy_map = {
-    'http': PROXY,
+    'https': PROXY,
 }
 ```
 
@@ -116,18 +116,19 @@ Finally, we make the request by calling `requests.get` and passing all the varia
 
 ```python
 try:
-    response = requests.get('http://httpbin.org/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
+    response = requests.get('https://ip.oxylabs.io/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
 except (ProxyError, ReadTimeout, ConnectTimeout) as error:
-    print(f'Unable to connect to the proxy: #{error}')
+        print('Unable to connect to the proxy: ', error)
 else:
-    print(response.json())
+    print(response.text)
 ```
 
 The output of this script should show you the ip of your proxy:
 
 ```bash
 $ python single_proxy.py
-{'origin': '194.163.131.117'}
+
+2.56.215.247
 ```
 
 You are now hidden behind a proxy when making your requests through the python script.
@@ -141,7 +142,7 @@ If you're using unreliable proxies, it could prove beneficial to save a bunch of
 
 For that purpose, first create a file `proxies.csv` with the following content:
 ```text
-http://194.163.131.117:8080
+http://2.56.215.247:3128
 https://88.198.24.108:8080
 http://50.206.25.108:80
 http://68.188.59.198:80
@@ -155,33 +156,46 @@ TIMEOUT_IN_SECONDS = 10
 CSV_FILENAME = 'proxies.csv'
 ```
 
-Next, write the code that opens the csv file and reads every proxy server line by line into a `csv_row[0]` variable and builds `scheme_proxy_map` configuration needed by the requests module.
+Next, write the code that opens the csv file and reads every proxy server line by line into a `csv_row` variable and builds `scheme_proxy_map` configuration needed by the requests module.
 
 ```python
 with open(CSV_FILENAME) as open_file:
     reader = csv.reader(open_file)
     for csv_row in reader:
         scheme_proxy_map = {
-            'http': csv_row[0],
+            'https': csv_row[0],
         }
 ```
 
 And finally, we use the same scraping code from the previous section to access the website via proxy
 
 ```python
+with open(CSV_FILENAME) as open_file:
+    reader = csv.reader(open_file)
+    for csv_row in reader:
+        scheme_proxy_map = {
+            'https': csv_row[0],
+        }
+        
+        # Access the website via proxy
         try:
-            response = requests.get('http://httpbin.org/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
+            response = requests.get('https://ip.oxylabs.io/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
         except (ProxyError, ReadTimeout, ConnectTimeout) as error:
             pass
         else:
-            print(response.json())
+            print(response.text)
 ```
 
 **Note**: if you are only interested in scraping the content using *any* working proxy from the list, then add a break after print to stop going through the proxies in the csv file
 
 ```python
-    print(response.json())
-    break
+        try:
+            response = requests.get('https://ip.oxylabs.io/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
+        except (ProxyError, ReadTimeout, ConnectTimeout) as error:
+            pass
+        else:
+            print(response.text)
+            break # notice the break here
 ```
 
 This complete code is available in [rotating_multiple_proxies.py](src/rotating_multiple_proxies.py)
@@ -191,12 +205,14 @@ It's time to tackle that in the next section!
 
 ## Rotating Multiple Proxies Using Async
 
-Checking all the proxies in the list one by one may be an option for some, but it has one significant downside - this approach is painfully slow. A better option would be to make requests and wait for responses in a non-blocking way - this would speed up the script significantly.
+Checking all the proxies in the list one by one may be an option for some, but it has one significant downside - this approach is painfully slow. This is because we are using a synchronous approach. We tackle requests one at a time and only move to the next once the previous one is completed. 
 
-In order to do that we use the `asyncio` module. You can install it using the following cli command: 
+A better option would be to make requests and wait for responses in a non-blocking way - this would speed up the script significantly.
+
+In order to do that we use the `aiohttp` module. You can install it using the following cli command: 
 
 ```bash
-$ pip install asyncio
+$ pip install aiohttp
 ```
 
 Then, create a python file where you define:
@@ -206,16 +222,16 @@ Then, create a python file where you define:
 
 ```python
 CSV_FILENAME = 'proxies.csv'
-URL_TO_CHECK = 'http://httpbin.org/ip'
+URL_TO_CHECK = 'https://ip.oxylabs.io/ip'
 TIMEOUT_IN_SECONDS = 10
 ```
 
-Next, we define an async function that uses the asyncio module.
+Next, we define an async function and run it using the asyncio module.
 It accepts two parameters: 
 * the url it needs to request
 * the proxy to use to access it
 
-We then prints the response. If the script received an error when attempting to access the url via proxy, it will print it as well.
+We then print the response. If the script received an error when attempting to access the url via proxy, it will print it as well.
 
 ```python
 
@@ -226,10 +242,10 @@ async def check_proxy(url, proxy):
                                                 sock_read=TIMEOUT_IN_SECONDS)
         async with aiohttp.ClientSession(timeout=session_timeout) as session:
             async with session.get(url, proxy=proxy, timeout=TIMEOUT_IN_SECONDS) as resp:
-                print(await resp.json())
+                print(await resp.text())
     except Exception as error:
         # you can comment out this line to only see valid proxies printed out in the command line
-        print(f'Proxy responded with an error: #{error}')
+        print('Proxy responded with an error: ', error)
         return
 ```
 
@@ -250,13 +266,15 @@ async def main():
 
 Finally, we run the main function and wait until all the async tasks complete
 ```python
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())
 ```
 
 This complete code is available in [rotating_multiple_proxies.py](src/rotating_multiple_proxies_async.py)
 
 This code now runs exceptionally fast!
+
+# We are open to contribution!
+
 Be sure to play around with it and create a pull request with any improvements you may find.
 
 Happy coding!
