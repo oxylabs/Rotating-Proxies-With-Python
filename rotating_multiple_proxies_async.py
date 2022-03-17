@@ -3,20 +3,22 @@ import aiohttp
 import asyncio
 
 CSV_FILENAME = 'proxies.csv'
-URL_TO_CHECK = 'http://httpbin.org/ip'
+URL_TO_CHECK = 'https://ip.oxylabs.io/ip'
 TIMEOUT_IN_SECONDS = 10
 
 
 async def check_proxy(url, proxy):
     try:
-        session_timeout = aiohttp.ClientTimeout(total=None,
-                                                sock_connect=TIMEOUT_IN_SECONDS,
-                                                sock_read=TIMEOUT_IN_SECONDS)
+        session_timeout = aiohttp.ClientTimeout(
+            total=None, sock_connect=TIMEOUT_IN_SECONDS, sock_read=TIMEOUT_IN_SECONDS
+        )
         async with aiohttp.ClientSession(timeout=session_timeout) as session:
-            async with session.get(url, proxy=proxy, timeout=TIMEOUT_IN_SECONDS) as resp:
-                print(await resp.json())
+            async with session.get(
+                url, proxy=proxy, timeout=TIMEOUT_IN_SECONDS
+            ) as resp:
+                print(await resp.text())
     except Exception as error:
-        print(f'Proxy responded with an error: #{error}')
+        print('Proxy responded with an error: ', error)
         return
 
 
@@ -31,5 +33,4 @@ async def main():
     await asyncio.gather(*tasks)
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

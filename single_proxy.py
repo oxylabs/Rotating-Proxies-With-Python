@@ -1,15 +1,17 @@
 import requests
 from requests.exceptions import ProxyError, ReadTimeout, ConnectTimeout
 
-PROXY = 'http://194.163.131.117:8080'
+PROXY = 'http://2.56.215.247:3128'
 TIMEOUT_IN_SECONDS = 10
 
 scheme_proxy_map = {
-    'http': PROXY,
+    'https': PROXY,
 }
 try:
-    response = requests.get('http://httpbin.org/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
+    response = requests.get(
+        'https://ip.oxylabs.io/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS
+    )
 except (ProxyError, ReadTimeout, ConnectTimeout) as error:
-    print(f'Unable to connect to the proxy: #{error}')
+    print('Unable to connect to the proxy: ', error)
 else:
-    print(response.json())
+    print(response.text)
