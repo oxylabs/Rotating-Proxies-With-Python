@@ -62,7 +62,7 @@ Let's start by using a single proxy.
 
 Your first step is to [find a free proxy server](https://www.google.com/search?q=free+proxy+server+list).
 
-**Important Note**: free proxies are unreliable, slow and can collect the data about the pages you access. If you're looking for a reliable paid option, we highly recommend using [oxylabs.io](https://oxylabs.io) 
+**Important Note**: free proxies are unreliable, slow and can collect the data about the pages you access. If you're looking for a reliable paid option, we highly recommend using [oxylabs.io](https://oxy.yt/GrVD) 
 
 To use a proxy, you will need its:
 * scheme (e.g. `http`)
