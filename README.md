@@ -45,7 +45,7 @@ Create a file with the `.py` extension with the following contents (or just copy
 ```python
 import requests
 
-response = requests.get('https://ip.oxylabs.io/ip')
+response = requests.get('https://ip.oxylabs.io/location')
 print(response.text)
 ```
 
@@ -97,7 +97,7 @@ TIMEOUT_IN_SECONDS = 10
 
 The requests module [needs to know](https://docs.python-requests.org/en/master/user/advanced/#proxies) when to actually use the proxy.
 For that, consider the website you are attempting to access. Does it use http or https?
-Since we're trying to access **https**://ip.oxylabs.io/ip, we can define this configuration as follows
+Since we're trying to access **https**://ip.oxylabs.io/location, we can define this configuration as follows
 ```python
 scheme_proxy_map = {
     'https': PROXY,
@@ -118,7 +118,7 @@ Finally, we make the request by calling `requests.get` and passing all the varia
 
 ```python
 try:
-    response = requests.get('https://ip.oxylabs.io/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
+    response = requests.get('https://ip.oxylabs.io/location', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
 except (ProxyError, ReadTimeout, ConnectTimeout) as error:
         print('Unable to connect to the proxy: ', error)
 else:
@@ -181,7 +181,7 @@ with open(CSV_FILENAME) as open_file:
         
         # Access the website via proxy
         try:
-            response = requests.get('https://ip.oxylabs.io/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
+            response = requests.get('https://ip.oxylabs.io/location', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
         except (ProxyError, ReadTimeout, ConnectTimeout) as error:
             pass
         else:
@@ -192,7 +192,7 @@ with open(CSV_FILENAME) as open_file:
 
 ```python
         try:
-            response = requests.get('https://ip.oxylabs.io/ip', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
+            response = requests.get('https://ip.oxylabs.io/location', proxies=scheme_proxy_map, timeout=TIMEOUT_IN_SECONDS)
         except (ProxyError, ReadTimeout, ConnectTimeout) as error:
             pass
         else:
@@ -224,7 +224,7 @@ Then, create a python file where you define:
 
 ```python
 CSV_FILENAME = 'proxies.csv'
-URL_TO_CHECK = 'https://ip.oxylabs.io/ip'
+URL_TO_CHECK = 'https://ip.oxylabs.io/location'
 TIMEOUT_IN_SECONDS = 10
 ```
 
