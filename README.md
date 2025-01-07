@@ -280,5 +280,6 @@ This code now runs exceptionally fast!
 # We are open to contribution!
 
 Be sure to play around with it and create a pull request with any improvements you may find.
-Also, check this [Best rotating proxy service](https://medium.com/@oxylabs.io/10-best-rotating-proxy-services-for-2024-853d840af1a4) list
+Also, check this [Best rotating proxy service](https://medium.com/@oxylabs.io/10-best-rotating-proxy-services-for-2024-853d840af1a4) list.
+
 Happy coding!
